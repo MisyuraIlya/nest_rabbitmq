@@ -1,0 +1,47 @@
+# Global settings
+global:
+  replicaCount: 1
+
+# Consumer service configuration
+consumer:
+  image:
+    repository: consumer-app
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+  ingress:
+    path: /consumer
+
+# Producer service configuration
+producer:
+  image:
+    repository: producer-app
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+  ingress:
+    path: /producer
+
+# RabbitMQ Configuration
+rabbitmq:
+  host: "rabbitmq.default.svc.cluster.local"
+  port: 5672
+  managementPort: 15672  # Management panel port
+  image:
+    repository: rabbitmq
+    tag: "3.8-management"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5672
+    targetPort: 5672
+    managementTargetPort: 15672
+
+# Ingress configuration
+ingress:
+  className: "nginx"
+  host: "myapp.dev"

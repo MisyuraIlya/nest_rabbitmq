@@ -1,0 +1,21 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: single-helm-nestjs
+build:
+  artifacts:
+    - image: consumer-app
+      context: ./consumer
+      docker:
+        dockerfile: Dockerfile
+    - image: producer-app
+      context: ./producer
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  helm:
+    releases:
+      - name: all-in-one
+        chartPath: helm
+        valuesFiles:
+          - helm/values.yaml

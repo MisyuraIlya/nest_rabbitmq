@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+spec:
+  replicas: {{ .Values.global.replicaCount }}
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: {{ .Values.consumer.image.repository }}:{{ .Values.consumer.image.tag }}
+          ports:
+            - containerPort: {{ .Values.consumer.service.port }}
+          env:
+            - name: RABBITMQ_USER
+              value: "guest"
+            - name: RABBITMQ_PASSWORD
+              value: "guest"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq.default.svc.cluster.local"
+            - name: RABBITMQ_PORT
+              value: "5672"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumer
+spec:
+  type: {{ .Values.consumer.service.type }}
+  ports:
+    - port: {{ .Values.consumer.service.port }}
+  selector:
+    app: consumer

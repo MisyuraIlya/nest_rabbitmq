@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  replicas: {{ .Values.global.replicaCount }}
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: {{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}
+          ports:
+            - containerPort: {{ .Values.rabbitmq.service.port }}
+            - containerPort: {{ .Values.rabbitmq.managementPort }}  # Management port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  type: {{ .Values.rabbitmq.service.type }}
+  ports:
+    - name: amqp
+      port: {{ .Values.rabbitmq.service.port }}
+      targetPort: {{ .Values.rabbitmq.service.targetPort }}
+    - name: management
+      port: {{ .Values.rabbitmq.managementPort }}
+      targetPort: {{ .Values.rabbitmq.managementTargetPort }}
+  selector:
+    app: rabbitmq
